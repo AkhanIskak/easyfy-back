@@ -123,6 +123,7 @@ export default class User {
 		await Client.create(body);
 
 		res.status(200).send({
+			code:"success",
 			message:
 				"Registration is successful , please confirm your email , we send verification code to your email ",
 		});
@@ -156,7 +157,7 @@ export default class User {
 				emailConfirmDate: undefined,
 			}
 		);
-		res.status(200).send({ message: "The email is succesfuly confirmed" });
+		res.status(200).send({ message: "The email is succesfuly confirmed",code:"success" });
 	};
 	static resendEmailConfirm = async (transporter, reqBody, res, Client) => {
 		let user = await Client.findOne({ email: reqBody.email });

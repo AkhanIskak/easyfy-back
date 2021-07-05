@@ -13,7 +13,7 @@ var transporter = nodeMailer.createTransport({
   auth: {
     user: "alex12hitman@gmail.com",
     pass: "yilmaz2015",
-  },
+  },   
 });
 
 app.use(express.json());
@@ -32,14 +32,20 @@ db.mongoose
 
 app.post("/register", async (req, res) => {
   for (const [key, value] of Object.entries(req.body)) {
+   
     if (!value)
       res.status(200).json({ message: "please fill all required fields" });
   }
-  let client = await Client.findOne({
-    $or: [{ email: req.body.email }, { phone: req.body.nickname }],
-  });
+  let client1 =  Client.findOne({
+    nickname: req.body.nickname }
+  )
+  let client2 =  Client.findOne({
+    email: req.body.email }
+  )
+  let values = await Promise.all([client1,client2])
+ console.log(values)
 
-  if (client) {
+  if (values[0] || values[1]) {
     res
       .status(200)
       .send({ message: "This email or nickname are already in use" });
@@ -63,7 +69,7 @@ app.post("/changePassword", (req, res) => {
           });
         } else {
           res.status(200).send({ message: "The old password is wrong " });
-        }
+        } 
       });
     });
   } else {
