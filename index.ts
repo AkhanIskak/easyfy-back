@@ -81,6 +81,7 @@ app.post("/confirmEmail", (req, res) => {
 });
 app.post("/resendCode", (req, res) => {
   User.resendEmailConfirm(transporter, req.body, res, Client);
+
 });
 app.post("/login", (req, res) => {
   if (req.body.password && req.body.email) {
@@ -99,6 +100,7 @@ app.post("/login", (req, res) => {
                 },
                 function (err, token) {
                   res.status(200).send({
+					code:"success",
                     message: "User is successfuly loged in ",
                     jwt: token,
                     nickname: answ.nickname,
