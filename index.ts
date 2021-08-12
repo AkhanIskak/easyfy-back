@@ -6,6 +6,13 @@ import bcrypt = require("bcrypt");
 import cors = require("cors");
 import jwt from "jsonwebtoken";
 import nodeMailer from "nodemailer";
+import https = require("https");
+import http = require("http");
+import fs = require('fs')
+var privateKey  = fs.readFileSync('ssl certificates/key.pem', 'utf8');
+var certificate = fs.readFileSync('ssl certificates/cert.pem', 'utf8');
+const credentials = {key: privateKey, cert: certificate, passphrase: 'ahan'};
+
 let app = express();
 app.use(cors());
 var transporter = nodeMailer.createTransport({
@@ -13,7 +20,7 @@ var transporter = nodeMailer.createTransport({
   auth: {
     user: "alex12hitman@gmail.com",
     pass: "yilmaz2015",
-  },   
+  },
 });
 
 app.use(express.json());
@@ -32,18 +39,17 @@ db.mongoose
 
 app.post("/register", async (req, res) => {
   for (const [key, value] of Object.entries(req.body)) {
-   
     if (!value)
       res.status(200).json({ message: "please fill all required fields" });
   }
-  let client1 =  Client.findOne({
-    nickname: req.body.nickname }
-  )
-  let client2 =  Client.findOne({
-    email: req.body.email }
-  )
-  let values = await Promise.all([client1,client2])
- console.log(values)
+  let client1 = Client.findOne({
+    nickname: req.body.nickname,
+  });
+  let client2 = Client.findOne({
+    email: req.body.email,
+  });
+  let values = await Promise.all([client1, client2]);
+  console.log(values);
 
   if (values[0] || values[1]) {
     res
@@ -69,7 +75,7 @@ app.post("/changePassword", (req, res) => {
           });
         } else {
           res.status(200).send({ message: "The old password is wrong " });
-        } 
+        }
       });
     });
   } else {
@@ -81,7 +87,6 @@ app.post("/confirmEmail", (req, res) => {
 });
 app.post("/resendCode", (req, res) => {
   User.resendEmailConfirm(transporter, req.body, res, Client);
-
 });
 app.post("/login", (req, res) => {
   if (req.body.password && req.body.email) {
@@ -100,7 +105,7 @@ app.post("/login", (req, res) => {
                 },
                 function (err, token) {
                   res.status(200).send({
-					code:"success",
+                    code: "success",
                     message: "User is successfuly loged in ",
                     jwt: token,
                     nickname: answ.nickname,
@@ -153,5 +158,8 @@ app.get("/resetPassword/:email/:code", (req, res) => {
     res.status(500).send({ message: "error" });
   }
 });
-const Port = 5000;
-app.listen(Port, () => console.log(`server is listening on ${Port} `));
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(credentials, app);
+const PORT = 5000;
+httpServer.listen(3000)
+httpsServer.listen(PORT);
