@@ -155,11 +155,10 @@ app.get("/resetPassword/:email/:code", (req, res) => {
   if (req.params) {
     User.changePassword(req, res, Client);
   } else {
-    res.status(500).send({ message: "error" });
+    res.status(500).send({ message: "error" }); 
   }
 });
 var httpServer = http.createServer(app);
 var httpsServer = https.createServer(credentials, app);
 const PORT = 5000;
-httpServer.listen(3000)
-httpsServer.listen(PORT);
+httpServer.listen(PORT);
