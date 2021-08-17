@@ -3,6 +3,8 @@ import { promisify } from "util"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 import crypto from "crypto"
+const dotenv = require('dotenv');
+dotenv.config();
 export default class User {
 	static changePassword = async (req, res, Client) => {
 		let user = await Client.findOne({ email: req.params.email });
@@ -33,10 +35,14 @@ export default class User {
 			expiresIn: 300,
 		});
 		await Client.findOneAndUpdate({ email: req.body.email }, { pswRstCode: undefined, pswRstDate: undefined });
-		res.status(200).send({
-			message: "PLease type new password",
-			jwt: token
-		})
+		return res
+			.cookie("access_token", token, {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === "production",
+			})
+			.status(200)
+			.json({ message: "Logged in successfully 😊 👌" });
+
 	};
 	static resetPassword = async (req, res, Client, transporter) => {
 		if (!req.body.email) {
@@ -88,10 +94,14 @@ export default class User {
 					});
 				} else {
 					//give data
-					res.send("secret data");
+					res.status(200).json({
+						message:"user is logged"
+					});
 				}
 			} else {
-				res.send("secret data");
+				res.status(200).json({
+					message:"user is logged"
+				});
 			}
 		} else {
 			res.send({ message: "this user doesn't exist anymore" });
@@ -101,7 +111,7 @@ export default class User {
 		body.password = await bcrypt.hash(body.password, 10);
 
 		let code = Math.floor(Math.random() * 10001);
-		var mailOptions = {
+		const  mailOptions = {
 			from: "alex12hitman@gmail.com",
 			to: body.email,
 			subject: "Your verification code ",
