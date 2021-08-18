@@ -2,6 +2,7 @@ import express from "express";
 import User from "./Classes/User";
 import db from "./clientmodel/clientModel";
 
+const cookieParser = require('cookie-parser')
 const Client = db.client;
 import bcrypt = require("bcrypt");
 import cors = require("cors");
@@ -10,6 +11,7 @@ import nodeMailer from "nodemailer";
 import https = require("https");
 import http = require("http");
 import fs = require('fs')
+import changePassword from "./controllers/changePassword";
 const dotenv = require('dotenv');
 dotenv.config();
 var privateKey = fs.readFileSync('ssl certificates/key.pem', 'utf8');
@@ -17,6 +19,7 @@ var certificate = fs.readFileSync('ssl certificates/cert.pem', 'utf8');
 const credentials = {key: privateKey, cert: certificate, passphrase: 'ahan'};
 
 let app = express();
+app.use(cookieParser());
 app.use(cors());
 var transporter = nodeMailer.createTransport({
     service: "gmail",
@@ -38,7 +41,7 @@ db.mongoose
         }
     )
     .then(() => console.log("connected to DB"));
-
+app.use("changePassword",changePassword);
 app.post("/register", async (req, res) => {
     for (const [key, value] of Object.entries(req.body)) {
         if (!value)
@@ -62,28 +65,7 @@ app.post("/register", async (req, res) => {
     }
 });
 
-app.post("/changePassword", (req, res) => {
-    if (req.body.email && req.body.password && req.body.newPassword) {
-        Client.findOne({email: req.body.email}).then((el) => {
-            bcrypt.compare(req.body.password, el.password).then(function (result) {
-                if (result) {
-                    bcrypt.hash(req.body.newPassword, 10).then((psw) => {
-                        Client.findOneAndUpdate(
-                            {email: req.body.email},
-                            {password: psw, passwordChangedAt: Date.now()}
-                        ).then(() =>
-                            res.status(200).send({message: "password is reset", info: el})
-                        );
-                    });
-                } else {
-                    res.status(200).send({message: "The old password is wrong "});
-                }
-            });
-        });
-    } else {
-        res.status(200).send({message: "Please fill all fields"});
-    }
-});
+
 app.post("/confirmEmail", (req, res) => {
     User.confirmEmail(req.body, Client, res);
 });
@@ -166,8 +148,10 @@ app.get("/", (req, res) => {
         message: "success"
     })
 })
+
 let httpServer = http.createServer(app);
 let httpsServer = https.createServer(credentials, app);
 const PORT = 5000;
+httpsServer.listen(3000);
 
 httpServer.listen(PORT);

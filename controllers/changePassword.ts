@@ -1,0 +1,45 @@
+import User from "../Classes/User";
+import util from 'util';
+import jwt from "jsonwebtoken"
+import express from 'express'
+import bcrypt from 'bcrypt'
+
+const router = express.Router();
+import exportObj from "../clientmodel/clientModel";
+
+
+let client = exportObj.client;
+
+router.patch(":password:oldPassword:email", async (req, res) => {
+    if (req.params.oldPassword) {
+        let oldPasswordHash = await bcrypt.hash(req.params.oldPassword, 10);
+        let client1 = await client.find({email: req.params.email});
+        if (client1.password !== oldPasswordHash) {
+            res.status(500).json({
+                message: "old password is wrong"
+            })
+        }
+        let newPassword = await bcrypt.hash(req.params.password, 10);
+        client.findOneAndUpdate({email: req.params.email}, {password: newPassword,passwordChangedAt:Date.now()});
+    }
+    jwt.verify(req.cookies.auth, "secretPasswordReset", async function (err, decoded) {
+        if (err) {
+            res.status(200).send(err);
+        } else {
+            let hash = await bcrypt.hash(req.params.password, 10);
+            try {
+                await client.findOneAndUpdate({id: decoded._id}, {password: hash,passwordChangedAt:Date.now()});
+            } catch (err) {
+                res.status(500).json({
+                    message: "sorry , some error , please try later"
+                })
+            }
+            res.status(200).json({
+                message: "password is successfuly updated"
+            })
+        }
+    });
+
+
+})
+export default  router
