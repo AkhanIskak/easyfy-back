@@ -11,7 +11,6 @@ import https = require("https");
 import http = require("http");
 import fs = require('fs')
 import changePassword from "./controllers/changePassword";
-
 const dotenv = require('dotenv');
 dotenv.config();
 var privateKey = fs.readFileSync('ssl certificates/key.pem', 'utf8');
@@ -41,7 +40,7 @@ db.mongoose
         }
     )
     .then(() => console.log("connected to DB"));
-app.use("changePassword", changePassword);
+app.use("/changePassword", changePassword);
 app.post("/register", async (req, res) => {
     for (const [key, value] of Object.entries(req.body)) {
         if (!value)

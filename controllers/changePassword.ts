@@ -8,10 +8,10 @@ const router = express.Router();
 import exportObj from "../clientmodel/clientModel";
 
 
-let client = exportObj.client;
+let client = exportObj.clientModel;
 
-router.patch(":password:oldPassword:email", async (req, res) => {
-    if (req.params.oldPassword) {
+router.patch("/", async (req, res) => {
+    if (req.query.oldPassword) {
         let oldPasswordHash = await bcrypt.hash(req.params.oldPassword, 10);
         let client1 = await client.find({email: req.params.email});
         if (client1.password !== oldPasswordHash) {
@@ -19,14 +19,14 @@ router.patch(":password:oldPassword:email", async (req, res) => {
                 message: "old password is wrong"
             })
         }
-        let newPassword = await bcrypt.hash(req.params.password, 10);
-        client.findOneAndUpdate({email: req.params.email}, {password: newPassword,passwordChangedAt:Date.now()});
+        let newPassword = await bcrypt.hash(req.query.password, 10);
+        client.findOneAndUpdate({email: req.query.email}, {password: newPassword,passwordChangedAt:Date.now()});
     }
     jwt.verify(req.cookies.auth, "secretPasswordReset", async function (err, decoded) {
         if (err) {
             res.status(200).send(err);
         } else {
-            let hash = await bcrypt.hash(req.params.password, 10);
+            let hash = await bcrypt.hash(req.query.password, 10);
             try {
                 await client.findOneAndUpdate({id: decoded._id}, {password: hash,passwordChangedAt:Date.now()});
             } catch (err) {
