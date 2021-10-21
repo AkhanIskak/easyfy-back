@@ -1,11 +1,11 @@
-import User from "../Classes/User";
+import User from "../services/user-service";
 import util from 'util';
 import jwt from "jsonwebtoken"
 import express from 'express'
 import bcrypt from 'bcrypt'
 
 const router = express.Router();
-import exportObj from "../clientmodel/clientModel";
+import exportObj from "../models/Client";
 
 
 let client = exportObj.clientModel;
