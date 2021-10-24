@@ -1,4 +1,4 @@
-import User from "../services/user-service";
+import User from "../services/auth-service";
 import db from '../models/Client'
 const Client = db.clientModel;
 var express = require('express');

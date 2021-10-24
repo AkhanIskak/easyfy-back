@@ -1,8 +1,8 @@
-import User from "../services/user-service";
+import User from "../services/auth-service";
 import db from '../models/Client'
 import bcrypt = require("bcrypt");
 const Client = db.clientModel;
-import transporter from '../utils/transporter'
+import transporter from '../utils/transporter-email'
 var express = require('express');
 import jwt from "jsonwebtoken";
 var router = express.Router();
@@ -37,6 +37,7 @@ router.post("/resendCode", (req, res) => {
     User.resendEmailConfirm(transporter, req.body, res, Client);
 });
 router.post("/login", (req, res) => {
+    console.log('works');
     if (req.body.password && req.body.email) {
         Client.findOne({email: req.body.email}).then((answ) => {
             if (answ) {
