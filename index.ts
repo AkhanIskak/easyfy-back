@@ -9,6 +9,7 @@ import changePassword from "./controllers/change-password";
 import auth from "./controllers/auth";
 import user from "./controllers/user";
 import upload from "./controllers/upload";
+import sell from './controllers/sell'
 const dotenv = require("dotenv");
 dotenv.config();
 var privateKey = fs.readFileSync("ssl certificates/key.pem", "utf8");
@@ -32,6 +33,7 @@ app.use("/changePassword", changePassword);
 app.use("/", auth);
 app.use("/", user);
 app.use("/", upload);
+app.use('/sell',sell);
 let httpServer = http.createServer(app);
 let httpsServer = https.createServer(credentials, app);
 
