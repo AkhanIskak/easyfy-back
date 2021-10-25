@@ -1,4 +1,4 @@
-import User from "../services/auth-service";
+import User from "../services/user-service";
 import util from "util";
 import jwt from "jsonwebtoken";
 import express from "express";
@@ -12,7 +12,7 @@ let client = exportObj.clientModel;
 router.patch("/", async (req, res) => {
   if (req.query.oldPassword) {
     let oldPasswordHash = await bcrypt.hash(req.query.oldPassword, 10);
-    let client1 = await client.find({ email: req.query.email });
+    let client1 = await client.findOne({ email: req.query.email+"" });
     if (client1.password !== oldPasswordHash) {
       res.status(500).json({
         message: "old password is wrong",
@@ -20,7 +20,7 @@ router.patch("/", async (req, res) => {
     }
     let newPassword = await bcrypt.hash(req.query.password, 10);
     client.findOneAndUpdate(
-      { email: req.query.email },
+      { email: req.query.email+"" },
       { password: newPassword, passwordChangedAt: Date.now() }
     );
     res.status(200).send("Password is successfuly updated");

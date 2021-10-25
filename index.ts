@@ -8,7 +8,7 @@ import fs = require("fs");
 import changePassword from "./controllers/change-password";
 import auth from "./controllers/auth";
 import user from "./controllers/user";
-import upload from "./controllers/upload";
+import avatar from "./controllers/avatar";
 import sell from './controllers/sell'
 const dotenv = require("dotenv");
 dotenv.config();
@@ -24,7 +24,6 @@ db.mongoose
     useCreateIndex: true,
   })
   .then(() => console.log("connected to DB"));
-
 const app = express();  
 app.use(cors())
 app.use(express.json());
@@ -32,7 +31,7 @@ app.use(cookieParser());
 app.use("/changePassword", changePassword);
 app.use("/", auth);
 app.use("/", user);
-app.use("/", upload);
+app.use("/avatar", avatar);
 app.use('/sell',sell);
 let httpServer = http.createServer(app);
 let httpsServer = https.createServer(credentials, app);

@@ -1,10 +1,12 @@
-import User from "../services/auth-service";
+import User from "../services/user-service";
 import db from '../models/Client'
 import bcrypt = require("bcrypt");
 const Client = db.clientModel;
-import transporter from '../utils/transporter-email'
+import transporter from '../utils/transporter'
 var express = require('express');
 import jwt from "jsonwebtoken";
+const dotenv = require("dotenv");
+dotenv.config();
 var router = express.Router();
 router.post("/register", async (req, res) => {
     for (const [key, value] of Object.entries(req.body)) {
@@ -37,22 +39,24 @@ router.post("/resendCode", (req, res) => {
     User.resendEmailConfirm(transporter, req.body, res, Client);
 });
 router.post("/login", (req, res) => {
+
     console.log('works');
     if (req.body.password && req.body.email) {
         Client.findOne({email: req.body.email}).then((answ) => {
             if (answ) {
                 bcrypt
-                    .compare(req.body.password, answ.password)
+                    .compare(req.body.password+"", answ.password+"")
                     .then(function (result) {
                         if (result) {
                             //sign jwt
                             const token = jwt.sign(
                                 {id: answ._id},
-                                "secret",
+                                process.env.JWT_SECRET_STRING,
                                 {
-                                    expiresIn: 1000,
+                                    expiresIn: process.env.JWT_EXPIRE,
                                 },
                                 function (err, token) {
+                                    console.log(token);
                                     res.status(200).send({
                                         code: "success",
                                         message: "User is successfuly loged in ",

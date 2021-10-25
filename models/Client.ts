@@ -1,8 +1,8 @@
 import {Schema} from "inspector";
-
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 interface User {
+    _id:string,
     name: string,
     phoneNumber: string,
     nickname: string,
@@ -10,7 +10,7 @@ interface User {
     password: string,
     pswRstCode: string,
     pswRstDate: Date,
-    passwordChangedAt: Date,
+    passwordChangedAt: Number,
     emailConfirm: string,
     emailConfirmed: boolean
     emailConfirmDate: Date,
@@ -46,7 +46,7 @@ const schema = new mongoose.Schema <User> ({
     },
     pswRstCode: String,
     pswRstDate: Date,
-    passwordChangedAt: Date,
+    passwordChangedAt: Number,
     emailConfirm: {
         type: String,
     },
