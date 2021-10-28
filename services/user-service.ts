@@ -115,7 +115,7 @@ export default class User {
 
         let code = Math.floor(Math.random() * 10001);
         const mailOptions = {
-            from: "alex12hitman@gmail.com",
+            from: process.env.EMAIL,
             to: body.email,
             subject: "Your verification code ",
             text: code + "",
