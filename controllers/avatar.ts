@@ -12,8 +12,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 import multer = require("multer");
 import exp = require("constants");
-console.log= function(){
-};
+
 var storage = multer.diskStorage({
   destination: function (req, file, callback) {
     callback(null, "./assets/avatars");

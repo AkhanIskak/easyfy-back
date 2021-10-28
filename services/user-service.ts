@@ -10,6 +10,7 @@ dotenv.config();
 export default class User {
 
     static changePassword = async (req, res, Client) => {
+        console.log('ads');
         let user = await Client.findOne({email: req.params.email});
         if (!user) {
             res.status(500).send({message: "error"});
