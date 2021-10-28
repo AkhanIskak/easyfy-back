@@ -25,6 +25,7 @@ db.mongoose
   })
   .then(() => console.log("connected to DB"));
 const app = express();  
+app.set('view engine', 'pug');
 app.use(cors())
 app.use(express.json());
 app.use(cookieParser());
@@ -32,10 +33,10 @@ app.use("/changePassword", changePassword);
 app.use("/", auth);
 app.use("/", user);
 app.use("/avatar", avatar);
-app.use('/sell',sell);
+app.use('/sell',sell); 
 let httpServer = http.createServer(app);
 let httpsServer = https.createServer(credentials, app);
 
-const PORT = 5000;
+const PORT = 2000;   
 httpsServer.listen(3000);
 httpServer.listen(PORT);

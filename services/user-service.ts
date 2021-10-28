@@ -42,7 +42,7 @@ export default class User {
         res
             .cookie("auth", token,{sameSite:"Strict",httpOnly:true})
 
-            .sendFile(path.join(__dirname, '../../views', 'passwordReset.html'));
+            .render('passwordReset',{ip:process.env.SERVER_IP,port:process.env.HTTP_PORT})
 
 
     };
@@ -60,12 +60,12 @@ export default class User {
             res.status(500).send({message: "User does not exist "});
             throw Error("user does not exist ");
         }
-
+        console.log(`http://${process.env.SERVER_IP}:${process.env.HTTP_PORT}/resetPassword/` + req.body.email + '/' + code);
         var mailOptions = {
             from: "alex12hitman@gmail.com",
             to: req.body.email,
             subject: "Your verification code ",
-            text: "http://localhost:5000/resetPassword/" + req.body.email + '/' + code,
+            text: `http://${process.env.SERVER_IP}:${process.env.HTTP_PORT}/resetPassword/` + req.body.email + '/' + code,
         };
         let hashCode = await bcrypt.hash(code, 8);
         await Client.findOneAndUpdate(
