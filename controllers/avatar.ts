@@ -1,4 +1,4 @@
-import User from "../services/user-service";
+import User from "../services/user";
 import db from "../models/Client";
 import * as fsPromise from "fs/promises";
 import bcrypt = require("bcrypt");
