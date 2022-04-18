@@ -10,7 +10,7 @@ import auth from "./controllers/auth";
 import user from "./controllers/user";
 import avatar from "./controllers/avatar";
 import sell from "./controllers/sell";
-
+import radius from "./controllers/radius";
 import dotenv from "dotenv";
 dotenv.config();
 const privateKey = fs.readFileSync("ssl certificates/key.pem", "utf8");
@@ -35,6 +35,7 @@ app.use("/", auth);
 app.use("/", user);
 app.use("/avatar", avatar);
 app.use("/sell", sell);
+app.use("/radius", radius);
 const httpServer = http.createServer(app);
 const httpsServer = https.createServer(credentials, app);
 httpServer.listen(process.env.HTTP_PORT, () => console.log(`server is listening on port ${process.env.HTTP_PORT}`));

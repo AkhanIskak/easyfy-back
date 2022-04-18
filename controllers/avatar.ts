@@ -13,7 +13,7 @@ dotenv.config();
 import multer = require("multer");
 import exp = require("constants");
 
-var storage = multer.diskStorage({
+const storage = multer.diskStorage({
   destination: function (req, file, callback) {
     callback(null, "./assets/avatars");
   },
@@ -29,57 +29,38 @@ const upload = multer({
   storage: storage,
 });
 
-var router = express.Router();
+const router = express.Router();
 
 router.post(
   "/",
   (req, res, next) => {
-    jwt.verify(
-      req.query.token,
-      process.env.JWT_SECRET_STRING,
-      async function (err, decoded) {
-        if (err) {
-          return res.status(500).json({
-            status: "fail",
-            message: "you are not logged in",
-          });
-        }
-        req.query.id = decoded.id;
-        try {
-          await fsPromise.unlink(
-            `assets/avatars/${decoded.id}.${req.query.oldFileType}`
-          );
-        } catch (err) {
-        }
-        next();
+    jwt.verify(req.query.token, process.env.JWT_SECRET_STRING, async function (err, decoded) {
+      if (err) {
+        return res.status(500).json({
+          status: "fail",
+          message: "you are not logged in",
+        });
       }
-    );
+      req.query.id = decoded.id;
+      try {
+        await fsPromise.unlink(`assets/avatars/${decoded.id}.${req.query.oldFileType}`);
+      } catch (err) {}
+      next();
+    });
   },
 
-  upload.single('image'),
+  upload.single("image"),
   (req, res) => {
     res.status(200).json({
       message: "success!",
     });
-  }
+  },
 );
 router.get("/", (req, res) => {
- // console.log('1')
-  jwt.verify(
-    req.query.token,
-    process.env.JWT_SECRET_STRING,
-    async (err, decoded) => {
-      // '../../assets/avatars' because assets are not in dist folder
-      res
-        .status(200)
-        .sendFile(
-          path.join(
-            __dirname,
-            "../../assets/avatars",
-            `${decoded.id}.${req.query.fileType}`
-          )
-        );
-    }
-  );
+  // console.log('1')
+  jwt.verify(req.query.token, process.env.JWT_SECRET_STRING, async (err, decoded) => {
+    // '../../assets/avatars' because assets are not in dist folder
+    res.status(200).sendFile(path.join(__dirname, "../../assets/avatars", `${decoded.id}.${req.query.fileType}`));
+  });
 });
 export default router;
