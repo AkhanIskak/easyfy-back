@@ -9,7 +9,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 export default class User {
   static changePassword = async (req, res, Client) => {
-    console.log(req.params.email)
+    console.log(req.params.email);
     const user = await Client.findOne({ email: req.params.email });
     if (!user) {
       res.status(500).send({ message: "error" });
@@ -29,10 +29,10 @@ export default class User {
       throw Error("the link is old ");
     }
     console.log(process.env.PSWT_RESET_TIME);
-    const token = await promisify(jwt.sign)({ id: user._id}, process.env.SECRET_PSW_RESET, {
-      expiresIn: (Date.now()/1000)+process.env.PSWT_RESET_TIME,
+    const token = await promisify(jwt.sign)({ id: user._id }, process.env.SECRET_PSW_RESET, {
+      expiresIn: Date.now() / 1000 + process.env.PSWT_RESET_TIME,
     });
-    console.log(token)
+    console.log(token);
     await Client.findOneAndUpdate({ email: req.body.email }, { pswRstCode: undefined, pswRstDate: undefined });
     res
       .cookie("auth", token, { sameSite: "Strict", httpOnly: true })
@@ -90,11 +90,13 @@ export default class User {
           //give data
           res.status(200).json({
             message: "user is logged",
+             user,
           });
         }
       } else {
         res.status(200).json({
           message: "user is logged",
+          user
         });
       }
     } else {
@@ -192,5 +194,4 @@ export default class User {
     );
     res.status(200).send({ message: "The email is succesfuly confirmed", code: "success" });
   };
-
 }
