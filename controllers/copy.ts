@@ -1,4 +1,4 @@
-Skip to content
+/*Skip to content
 Search or jump to…
 Pull requests
 Issues
@@ -27,7 +27,7 @@ History
 2 contributors
 @AkhanIskak@Nurs-wd
 92 lines (83 sloc)  2.98 KB
-
+*/
 
 const dotenv = require('dotenv');
 const util = require('./util')

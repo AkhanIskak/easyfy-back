@@ -25,15 +25,17 @@ router.post("/", async (req, res) => {
       {
         from: [req.body.markers[0].latlng.latitude, req.body.markers[0].latlng.longitude],
         to: [req.body.markers[1].latlng.latitude, req.body.markers[1].latlng.longitude],
+        about:req.body.about
       },
     );
+    const maxDistance:number=parseInt(process.env.RADIUS,10) ;
     const users = await Client.aggregate([
       {
         $geoNear: {
           near: { coordinates: [req.body.markers[0].latlng.latitude, req.body.markers[0].latlng.longitude] },
           key: "from",
           distanceField: "dist.calculated",
-          maxDistance: 200,
+          maxDistance,
           includeLocs: "dist.location",
           spherical: true,
         },

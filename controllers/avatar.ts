@@ -44,7 +44,7 @@ router.post(
       req.query.id = decoded.id;
       try {
         await fsPromise.unlink(`assets/avatars/${decoded.id}.${req.query.oldFileType}`);
-      } catch (err) {}
+      } catch (err) { }
       next();
     });
   },
@@ -63,4 +63,20 @@ router.get("/", (req, res) => {
     res.status(200).sendFile(path.join(__dirname, "../../assets/avatars", `${decoded.id}.${req.query.fileType}`));
   });
 });
+router.get("/:id", (req, res) => {
+  console.log("reaches")
+  fs.readdir(__dirname + "/../../assets/avatars", (err, files) => {
+    if (err)
+      console.log(err);
+
+    for (let i in files) {
+      if (path.parse(files[i]).name == req.params.id) {
+        console.log("SENDING")
+        res.status(200).sendFile(path.join(__dirname, "../../assets/avatars", `${req.params.id}${path.parse(files[i]).ext}`))
+        return
+      }
+    }
+    res.status(404).json({ message: "not found" })
+  });
+})
 export default router;
